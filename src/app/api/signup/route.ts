@@ -5,15 +5,16 @@ import bcrypt from "bcryptjs";
 import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
 export async function POST(req: NextRequest) {
   await dbConnect();
-
   try {
     const { username, email, password } = await req.json();
+
     const exisitingUserVerifiedByUsername = await UserModel.findOne({
       username,
       isVerified: true,
     });
+
     if (exisitingUserVerifiedByUsername) {
-      return Response.json(
+      return NextResponse.json(
         {
           success: false,
           message: "user already taken",
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
     const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
     if (existingUserByEmail) {
       if (existingUserByEmail.isVerified) {
-        return Response.json(
+        return NextResponse.json(
           {
             success: false,
             message: "user already existed with this email address",
@@ -61,9 +62,9 @@ export async function POST(req: NextRequest) {
       username,
       verifyCode
     );
-    console.log("emailResponse :: " + emailResponse);
+    console.log("emailResponse :: " + JSON.stringify(emailResponse));
     if (!emailResponse.success) {
-      return Response.json(
+      return NextResponse.json(
         { success: false, message: emailResponse.message },
         { status: 500 }
       );
@@ -77,7 +78,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     console.log("Error registering User", error);
-    return Response.json(
+    return NextResponse.json(
       { success: false, message: "Error registering User" },
       { status: 500 }
     );

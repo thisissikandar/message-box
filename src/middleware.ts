@@ -9,7 +9,11 @@ export async function middleware(request: NextRequest) {
 
   if (token) {
     // Redirect authenticated users away from auth pages like sign-in, sign-up, etc.
-    if (url.pathname.startsWith("/sign-in") || url.pathname.startsWith("/sign-up") || url.pathname.startsWith("/verify")) {
+    if (
+      url.pathname.startsWith("/sign-in") ||
+      url.pathname.startsWith("/sign-up") ||
+      url.pathname.startsWith("/verify")
+    ) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   } else {
@@ -18,7 +22,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
   }
-  
+
   return NextResponse.next();
 }
 
